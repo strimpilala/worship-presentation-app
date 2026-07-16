@@ -1,0 +1,42 @@
+name: Build Windows exe
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Download source Bible database
+        shell: bash
+        run: |
+          mkdir -p db
+          curl -sfL -o db/source-bible.db "https://raw.githubusercontent.com/scrollmapper/bible_databases/2024/bible-sqlite.db"
+
+      - name: Build database
+        run: npm run build-db
+
+      - name: Build Windows installer
+        run: npx electron-builder --win --publish=never
+
+      - name: Upload installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: Scripture-Presenter-Installer
+          path: release/*.exe
