@@ -66,34 +66,42 @@ async function generateEmbedding(text) {
 console.log("Importing Bible versions...");
 let totalVerses = 0;
 
+// better-sqlite3 transactions must be fully synchronous, so we can't await
+// inside db.transaction() (it throws "Transaction function cannot return a
+// promise"). Instead, generate every embedding first with plain async/await,
+// then run the actual inserts as a fast synchronous transaction.
 for (const v of VERSIONS) {
   console.log(`Importing ${v.name}...`);
   insVersion.run(v.code, v.name);
 
   const rows = db.prepare(`SELECT b, c, v as verse, t as text FROM src.${v.table} ORDER BY id`).all();
 
-  const insertMany = db.transaction(async (allRows) => {
-    for (const row of allRows) {
-      const bookIdx = row.b - 1;
-      if (bookIdx < 0 || bookIdx >= BOOKS.length) continue;
+  const prepared = [];
+  for (const row of rows) {
+    const bookIdx = row.b - 1;
+    if (bookIdx < 0 || bookIdx >= BOOKS.length) continue;
 
-      const bookName = BOOKS[bookIdx][1];
-      const embedding = await generateEmbedding(row.text);
+    const bookName = BOOKS[bookIdx][1];
+    const embedding = await generateEmbedding(row.text);
 
-      const info = insVerse.run({
-        version: v.code,
-        book_id: row.b,
-        book_name: bookName,
-        chapter: row.c,
-        verse: row.verse,
-        text: row.text,
-        embedding: embedding
-      });
+    prepared.push({
+      version: v.code,
+      book_id: row.b,
+      book_name: bookName,
+      chapter: row.c,
+      verse: row.verse,
+      text: row.text,
+      embedding: embedding,
+    });
+  }
+
+  const insertMany = db.transaction((allRows) => {
+    for (const entry of allRows) {
+      insVerse.run(entry);
       totalVerses++;
     }
   });
-
-  await insertMany(rows);
+  insertMany(prepared);
 }
 
 console.log(`✅ Done! Imported ${totalVerses} verses with semantic embeddings.`);
