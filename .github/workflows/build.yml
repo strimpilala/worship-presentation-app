@@ -40,5 +40,5 @@ jobs:
       - name: Upload installer
         uses: actions/upload-artifact@v4
         with:
-          name: Scripture-Presenter-Installer
+          name: P-Worship-Installer
           path: release/*.exe
