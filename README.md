@@ -1,4 +1,4 @@
-# Scripture Presenter
+# P Worship
 
 An open-source **EasyWorship-style** worship presentation app built with Electron.
 
@@ -45,3 +45,20 @@ If results are few, it automatically falls back to web Bible search for better h
 ---
 
 ## Project Structure
+
+```
+main.js                 Electron entry point, windows, IPC
+preload.js              contextBridge API exposed to the renderer
+state.js                Shared schedule/preview/live state (desktop + Remote)
+ndi.js                  Optional NDI video output
+db/
+  books.js              Book names + aliases for reference parsing
+  build-db.js           One-time script that builds db/bible.db (run: npm run build-db)
+  search.js             Reference/phrase search against bible.db
+server/
+  index.js              Local HTTP + WebSocket server powering the mobile Remote
+  public/                Remote's static web app (HTML/CSS/JS + PWA manifest)
+src/
+  control/               Desktop control window (search, preview, schedule)
+  live/                  Live projector window
+```

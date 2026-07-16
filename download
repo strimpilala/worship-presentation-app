@@ -1,0 +1,10 @@
+node_modules/
+release/
+
+# Generated / downloaded Bible databases (large binary files, rebuilt via `npm run build-db`)
+db/bible.db
+db/source-bible.db
+
+# OS / editor cruft
+.DS_Store
+*.log

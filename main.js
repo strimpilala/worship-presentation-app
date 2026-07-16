@@ -43,7 +43,7 @@ function createControlWindow() {
   controlWindow = new BrowserWindow({
     width: 1200,
     height: 800,
-    title: 'Scripture Presenter — Control',
+    title: 'P Worship — Control',
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
@@ -51,7 +51,6 @@ function createControlWindow() {
     },
   });
   controlWindow.loadFile(path.join(__dirname, 'src/control/index.html'));
-  controlWindow.webContents.openDevTools({ mode: 'detach' });
   controlWindow.on('closed', () => {
     controlWindow = null;
     if (liveWindow) liveWindow.close();
@@ -214,7 +213,7 @@ ipcMain.handle('ndi:status', () => ({ available: ndi.isAvailable() }));
 ipcMain.handle('ndi:start', async () => {
   if (!liveWindow) createLiveWindow();
   try {
-    await ndi.start(liveWindow, 'Scripture Presenter');
+    await ndi.start(liveWindow, 'P Worship');
     return { ok: true };
   } catch (e) {
     return { ok: false, error: e.message };

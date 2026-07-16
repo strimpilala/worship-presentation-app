@@ -19,7 +19,7 @@ function isAvailable() {
   return grandiose !== null;
 }
 
-async function start(liveWindow, sourceName = 'Scripture Presenter') {
+async function start(liveWindow, sourceName = 'P Worship') {
   if (!grandiose) {
     throw new Error('NDI support is not installed. See README "NDI Output" section.');
   }
