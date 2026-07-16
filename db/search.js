@@ -11,7 +11,6 @@ function getDb() {
   return db;
 }
 
-// Alias lookup for reference parsing
 const ALIAS_TO_BOOK = [];
 BOOKS.forEach(([abbrev, name, ...aliases], idx) => {
   const bookId = idx + 1;
@@ -104,7 +103,6 @@ function phraseSearch(query, version, limit = 15) {
   return results;
 }
 
-// Web search fallback for vague references
 async function webSearch(query, version = 'kjv', limit = 6) {
   try {
     const res = await axios.get('https://bible-api.com/', {
@@ -121,12 +119,10 @@ async function webSearch(query, version = 'kjv', limit = 6) {
     }
     return [];
   } catch (e) {
-    console.warn("Web search unavailable:", e.message);
     return [];
   }
 }
 
-// Main search function (local + web fallback)
 async function search(rawInput, version) {
   const ref = parseReference(rawInput);
   if (ref) {
@@ -135,7 +131,6 @@ async function search(rawInput, version) {
 
   let results = phraseSearch(rawInput, version);
 
-  // For vague queries with few local results → use web search
   if (results.length < 5) {
     const webResults = await webSearch(rawInput, version);
     const seen = new Set(results.map(r => `${r.book_name}-${r.chapter}-${r.verse}`));
