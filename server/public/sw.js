@@ -3,7 +3,7 @@
 // network (this app is only useful when connected to the desktop anyway),
 // so this deliberately doesn't try to cache API responses.
 
-const CACHE_NAME = 'scripture-remote-shell-v1';
+const CACHE_NAME = 'p-worship-remote-shell-v1';
 const SHELL_FILES = ['/', '/remote.css', '/remote.js', '/manifest.json'];
 
 self.addEventListener('install', (event) => {

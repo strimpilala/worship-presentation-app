@@ -1,6 +1,6 @@
 {
-  "name": "Scripture Remote",
-  "short_name": "Scripture",
+  "name": "P Worship Remote",
+  "short_name": "P Worship",
   "description": "Search scripture and control the live display remotely",
   "start_url": "/",
   "display": "standalone",
